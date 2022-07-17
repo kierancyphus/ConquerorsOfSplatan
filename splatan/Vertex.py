@@ -1,5 +1,5 @@
 from typing import Optional, List, Set
-from splatan.Settlements import Settlements
+from splatan.enums.Settlements import Settlements
 
 
 class Vertex:
@@ -18,7 +18,7 @@ class Vertex:
         self.ability = ability
         self.settlement = settlement
         self.neighbours: List['Vertex'] = []
-        self.tile_ids: Set[str] = self.get_tiles(location)
+        self.tile_ids: Set[str] = self.get_tile_ids()
 
     def __str__(self) -> str:
         return f"<Vertex {self.name}>"
@@ -36,5 +36,8 @@ class Vertex:
         same_tiles = self.tile_ids.intersection(other.tile_ids)
         return len(same_tiles) == 2
 
-    def get_tiles(self, location: str) -> Set[str]:
-        return {tile for tile in location.split(".") if tile != "?"}
+    def is_on_tile(self, tile_id: int) -> bool:
+        return str(tile_id) in self.get_tile_ids()
+
+    def get_tile_ids(self) -> Set[str]:
+        return {tile for tile in self.name.split(".") if tile != "?"}

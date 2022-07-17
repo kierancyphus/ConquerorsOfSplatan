@@ -1,7 +1,7 @@
 from typing import Dict
 
 import splatan.Vertex as Vertex
-from splatan.Settlements import Settlements
+from splatan.enums.Settlements import Settlements
 
 
 class Vertices:
@@ -11,10 +11,11 @@ class Vertices:
     def __contains__(self, item):
         return str(item) in self.name_to_vertex
 
-    def build_settlement(self, name: str, settlement: Settlements) -> None:
+    def build_settlement(self, name: str, settlement: Settlements) -> Vertex.Vertex:
         # TODO: check if it can build there
         settlement = Vertex.Vertex(name, settlement=settlement)
         self.name_to_vertex[name] = settlement
+        return settlement
 
     def build_road(self, start: str, end: str) -> None:
         # at least once vertex has been initialized

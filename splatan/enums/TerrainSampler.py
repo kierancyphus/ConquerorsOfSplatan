@@ -10,7 +10,7 @@ class TerrainTypes(Enum):
     ORE = auto()
 
 
-class Terrains:
+class TerrainSampler:
     @staticmethod
     def sample_terrain() -> TerrainTypes:
         terrains = list(TerrainTypes)

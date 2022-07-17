@@ -2,9 +2,12 @@ from splatan.Tile import Tile
 from splatan.Dice import Dice
 import splatan.Vertices as Vertices
 from splatan.Tiles import Tiles
-from splatan.Settlements import Settlements
+from splatan.enums.Settlements import Settlements
+from splatan.Vertex import Vertex
+from splatan.enums.TerrainSampler import TerrainTypes
 
-from typing import List
+from typing import List, Dict
+from collections import defaultdict
 
 
 class Board:
@@ -17,12 +20,19 @@ class Board:
     def get_rolled_tiles(self, roll: int) -> List[Tile]:
         return self.tiles.tiles_for_roll(roll)
 
-    def build_settlement(self, name: str, settlement: Settlements) -> None:
-        self.vertices.build_settlement(name, settlement)
-        pass
+    def build_settlement(self, name: str, settlement: Settlements) -> Vertex:
+        return self.vertices.build_settlement(name, settlement)
 
     def build_road(self, start: str, end: str) -> None:
         self.vertices.build_road(start, end)
+
+    def get_resources_for_tile_ids(self, tile_ids: List[str]) -> Dict[TerrainTypes, int]:
+        resources = defaultdict(int)
+        for tile_id in tile_ids:
+            tile = self.tiles.get_tile_by_id(int(tile_id))
+            resources[tile.terrain] += 1
+
+        return resources
 
     def __str__(self) -> str:
         return str(self.tiles)
