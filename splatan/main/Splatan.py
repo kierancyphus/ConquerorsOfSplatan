@@ -1,9 +1,9 @@
-from splatan.Board import Board
-from splatan.Players import Players
-import splatan.Player as Player
-from splatan.enums.GameState import GameState
-from splatan.Dice import Dice
-from splatan.enums.Settlements import Settlements
+from splatan.main.Board import Board
+from splatan.main.Players import Players
+import splatan.main.Player as Player
+from splatan.main.enums.GameState import GameState
+from splatan.main.Dice import Dice
+from splatan.main.enums.Settlements import Settlements
 
 from typing import Tuple
 

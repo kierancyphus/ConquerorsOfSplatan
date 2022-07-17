@@ -1,7 +1,7 @@
 from typing import Dict
 
-import splatan.Vertex as Vertex
-from splatan.enums.Settlements import Settlements
+import splatan.main.Vertex as Vertex
+from splatan.main.enums.Settlements import Settlements
 
 
 class Vertices:

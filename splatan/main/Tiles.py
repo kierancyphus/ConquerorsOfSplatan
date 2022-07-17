@@ -1,6 +1,6 @@
-from splatan.Tile import Tile
-from splatan.enums.TerrainSampler import TerrainSampler
-from splatan.Dice import Dice
+from splatan.main.Tile import Tile
+from splatan.main.enums.TerrainSampler import TerrainSampler
+from splatan.main.Dice import Dice
 from typing import List, Dict
 from collections import defaultdict
 

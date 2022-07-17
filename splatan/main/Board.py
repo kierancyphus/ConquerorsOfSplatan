@@ -1,10 +1,10 @@
-from splatan.Tile import Tile
-from splatan.Dice import Dice
-import splatan.Vertices as Vertices
-from splatan.Tiles import Tiles
-from splatan.enums.Settlements import Settlements
-from splatan.Vertex import Vertex
-from splatan.enums.TerrainSampler import TerrainTypes
+from splatan.main.Tile import Tile
+from splatan.main.Dice import Dice
+import splatan.main.Vertices as Vertices
+from splatan.main.Tiles import Tiles
+from splatan.main.enums.Settlements import Settlements
+from splatan.main.Vertex import Vertex
+from splatan.main.enums.TerrainSampler import TerrainTypes
 
 from typing import List, Dict
 from collections import defaultdict

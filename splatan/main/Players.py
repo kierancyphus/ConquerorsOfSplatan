@@ -1,6 +1,6 @@
-import splatan.Player as Player
-import splatan.Tile as Tile
-import splatan.Board as Board
+import splatan.main.Player as Player
+import splatan.main.Tile as Tile
+import splatan.main.Board as Board
 
 from typing import List
 from random import randint

@@ -1,7 +1,7 @@
-from splatan.Vertex import Vertex
-from splatan.Tile import Tile
-from splatan.Cards import Cards
-from splatan.enums.TerrainSampler import TerrainTypes
+from splatan.main.Vertex import Vertex
+from splatan.main.Tile import Tile
+from splatan.main.Cards import Cards
+from splatan.main.enums.TerrainSampler import TerrainTypes
 
 from typing import List, Dict
 

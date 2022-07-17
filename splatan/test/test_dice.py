@@ -1,4 +1,4 @@
-from splatan.Dice import Dice
+from splatan.main.Dice import Dice
 
 
 def test_dice_roll_returns_valid_number():

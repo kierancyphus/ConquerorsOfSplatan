@@ -1,8 +1,8 @@
-from splatan.Splatan import Splatan
-from splatan.enums.GameState import GameState
-from splatan.enums.Settlements import Settlements
-from splatan.enums.TerrainSampler import TerrainTypes
-from splatan.Tile import Tile
+from splatan.main.Splatan import Splatan
+from splatan.main.enums.GameState import GameState
+from splatan.main.enums.Settlements import Settlements
+from splatan.main.enums.TerrainSampler import TerrainTypes
+from splatan.main.Tile import Tile
 
 
 from pytest import raises

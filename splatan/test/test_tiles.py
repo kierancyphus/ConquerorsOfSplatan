@@ -1,6 +1,6 @@
-from splatan.Dice import Dice
-from splatan.Tiles import Tiles
-from splatan.Tile import Tile, TerrainTypes
+from splatan.main.Dice import Dice
+from splatan.main.Tiles import Tiles
+from splatan.main.Tile import Tile, TerrainTypes
 
 num_tiles = 19
 dice = Dice()

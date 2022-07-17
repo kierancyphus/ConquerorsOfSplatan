@@ -1,4 +1,4 @@
-from splatan.enums.TerrainSampler import TerrainTypes
+from splatan.main.enums.TerrainSampler import TerrainTypes
 
 
 class Tile:

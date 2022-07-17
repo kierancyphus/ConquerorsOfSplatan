@@ -1,5 +1,5 @@
 from typing import Optional, List, Set
-from splatan.enums.Settlements import Settlements
+from splatan.main.enums.Settlements import Settlements
 
 
 class Vertex:
