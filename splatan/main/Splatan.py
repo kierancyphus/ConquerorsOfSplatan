@@ -4,7 +4,7 @@ import splatan.main.Player as Player
 from splatan.main.enums.GameState import GameState
 from splatan.main.Dice import Dice
 from splatan.main.enums.Settlements import Settlements
-from splatan.main.errors import EnrollmentNotOpenError
+from splatan.main.errors import EnrollmentNotOpenError, NotHostError
 
 from typing import Tuple
 
@@ -19,13 +19,12 @@ class Splatan:
         self.state: GameState = GameState.SETTINGS
 
         # enroll the host
-        self.host = Player.Player(host_name)
-        self.players.add_player(self.host)
+        self.players.add_player(host_name)
+        self.host = self.players.get_player_by_name(host_name)
 
     def settings(self) -> None:
         # doesn't do anything for now, but will eventually let you choose how many pieces you want and stuff
         self.state = GameState.PLAYER_ENROLLMENT
-        print("Changing the game state to enrollment")
 
     def enroll_player(self, name: str) -> Players:
         """
@@ -36,30 +35,32 @@ class Splatan:
         :param name: name of the player trying to enroll
         :return:
         """
-        print(self.state)
         if self.state != GameState.PLAYER_ENROLLMENT:
             raise EnrollmentNotOpenError('Error: Enrollment is not currently open.')
 
-        new_player = Player.Player(name)
-        self.players.add_player(new_player)
+        self.players.add_player(name)
         return self.players
 
-    def start_game(self, player: Player.Player) -> Player:
+    def start_game(self, player_name: str) -> str:
         """
         A player attempts to close enrollment and start the game. If someone other than the host
         attempts to start the game, it raises a ValueError.
-        :param player: a player making the request. Must be the host
+        :param player_name: name of player making the request. Must be the host
         :return: the first player to go
         """
+        player = self.players.get_player_by_name(player_name)
+
         if player != self.host:
-            raise ValueError('Error: only the host can start the game')
+            raise NotHostError('Error: only the host can start the game')
 
         # TODO: Ideally I store the enum in an object and expose a `next_game_state` method
         self.state = GameState.INITIAL_SETUP
-        return self.players.choose_starting_player()
 
-    def build_initial_settlement_and_road(self, player: Player.Player, location: str, settlement: Settlements,
-                                          road_end: str) -> Tuple[Board, Player.Player]:
+        starting_player = self.players.choose_starting_player()
+        return starting_player.name
+
+    def build_initial_settlement_and_road(self, player_name: str, location: str, settlement: Settlements,
+                                          road_end: str) -> Tuple[Board, str]:
         """
         builds initial settlement, increments the player turn and returns the board state and the next player to go
         :param road_end:
@@ -68,14 +69,17 @@ class Splatan:
         :param settlement:
         :return: Board state and the next player to go
         """
+        player = self.players.get_player_by_name(player_name)
+
         self.check_turn(player)
 
         built_settlement = self.board.build_settlement(location, settlement)
         player.save_settlement(built_settlement)
 
         self.board.build_road(location, road_end)
+        next_turn_player = self.players.next_turn_player()
 
-        return self.board, self.players.next_turn_player()
+        return self.board, next_turn_player.name
 
     def check_initial_setup_complete(self) -> bool:
         """
@@ -124,9 +128,11 @@ class Splatan:
 
         self.board.build_road(start, end)
 
-    def end_turn(self, player: Player.Player) -> Player.Player:
+    def end_turn(self, player_name: str) -> str:
+        player = self.players.get_player_by_name(player_name)
         self.check_turn(player)
-        return self.players.next_turn_player()
+        next_player = self.players.next_turn_player()
+        return next_player.name
 
     def change_game_state(self, state: GameState) -> None:
         self.state = state

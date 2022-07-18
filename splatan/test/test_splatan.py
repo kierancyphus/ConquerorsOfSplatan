@@ -3,6 +3,7 @@ from splatan.main.enums.GameState import GameState
 from splatan.main.enums.Settlements import Settlements
 from splatan.main.enums.TerrainSampler import TerrainTypes
 from splatan.main.Tile import Tile
+from splatan.main.errors import EnrollmentNotOpenError
 
 
 from pytest import raises
@@ -18,7 +19,7 @@ def test_host_can_enroll_in_settings_state():
 def test_players_can_not_enroll_before_settings():
     splatan = Splatan("jim")
 
-    with raises(ValueError):
+    with raises(EnrollmentNotOpenError):
         splatan.enroll_player("Jimmy")
 
 
@@ -47,50 +48,51 @@ def test_returns_error_if_non_host_tries_to_start_game():
     not_host = players.get_current_player()
 
     with raises(ValueError):
-        splatan.start_game(not_host)
+        splatan.start_game(not_host.name)
 
 
 def test_starting_player_can_build_settlements_and_roads():
-    splatan, players, starting_player = host_settings_enroll_and_start_game()
+    splatan, players, starting_player_name = host_settings_enroll_and_start_game()
 
-    splatan.build_initial_settlement_and_road(starting_player, 'location', Settlements.TOWN, 'some other location')
+    splatan.build_initial_settlement_and_road(starting_player_name, 'location', Settlements.TOWN, 'some other location')
     assert True
 
 
 def test_non_starting_player_can_not_build_settlements():
-    splatan, players, starting_player = host_settings_enroll_and_start_game()
+    splatan, players, _ = host_settings_enroll_and_start_game()
 
     players.get_current_player_and_increment()
     non_starting_player = players.get_current_player_and_increment()
 
     with raises(ValueError):
-        splatan.build_initial_settlement_and_road(non_starting_player, 'location', Settlements.TOWN, 'some other location')
+        splatan.build_initial_settlement_and_road(non_starting_player.name, 'location', Settlements.TOWN, 'some other location')
 
 
 def test_check_initial_setup_returns_false_if_not_all_players_gone_twice():
-    splatan, players, starting_player = host_settings_enroll_and_start_game()
+    splatan, players, starting_player_name = host_settings_enroll_and_start_game()
 
-    splatan.build_initial_settlement_and_road(starting_player, 'location', Settlements.TOWN, 'some other location')
+    splatan.build_initial_settlement_and_road(starting_player_name, 'location', Settlements.TOWN, 'some other location')
     assert not splatan.check_initial_setup_complete()
 
 
 def test_check_initial_setup_returns_true_once_all_players_gone_twice():
-    splatan, players, starting_player = host_settings_enroll_and_start_game()
+    splatan, players, starting_player_name = host_settings_enroll_and_start_game()
 
-    build_initial_settlements(splatan, starting_player)
+    build_initial_settlements(splatan, starting_player_name)
 
     assert splatan.check_initial_setup_complete()
 
 
 def test_players_get_initial_resources_after_setup_complete():
-    splatan, players, player = host_settings_enroll_start_game_setup()
+    splatan, players, player_name = host_settings_enroll_start_game_setup()
+    player = players.get_player_by_name(player_name)
 
     # TODO: this is a really bad way to do this
     assert len(player.cards) > 0
 
 
 def test_player_gets_resources_on_roll():
-    splatan, players, player = host_settings_enroll_start_game_setup()
+    splatan, players, player_name = host_settings_enroll_start_game_setup()
 
     # hacky stuff - "replace" tile 14 with one that is guaranteed to roll on a 4
     # which we know the player is on
@@ -99,28 +101,30 @@ def test_player_gets_resources_on_roll():
 
     splatan.roll_number = 4
     splatan.distribute_resources()
+    player = players.get_player_by_name(player_name)
 
     assert len(player.cards) > 3
 
 
 def test_next_player_turn_on_turn_end():
-    splatan, players, player = host_settings_enroll_start_game_setup()
+    splatan, players, player_name = host_settings_enroll_start_game_setup()
 
     splatan.roll()
     splatan.distribute_resources()
 
-    old_player = player
-    player = splatan.end_turn(player)
+    old_player = players.get_player_by_name(player_name)
+    player_name = splatan.end_turn(player_name)
+    player = players.get_player_by_name(player_name)
 
     assert old_player != player
 
 
-def build_initial_settlements(splatan, player):
-    _, player = splatan.build_initial_settlement_and_road(player, '1.2.?', Settlements.TOWN, '1.2.5')
-    _, player = splatan.build_initial_settlement_and_road(player, '4.5.9', Settlements.TOWN, '5.9.10')
-    _, player = splatan.build_initial_settlement_and_road(player, '13.14.17', Settlements.TOWN, '9.13.14')
-    _, player = splatan.build_initial_settlement_and_road(player, '11.15.16', Settlements.TOWN, '11.12.16')
-    return player
+def build_initial_settlements(splatan, player_name: str) -> str:
+    _, player_name = splatan.build_initial_settlement_and_road(player_name, '1.2.?', Settlements.TOWN, '1.2.5')
+    _, player_name = splatan.build_initial_settlement_and_road(player_name, '4.5.9', Settlements.TOWN, '5.9.10')
+    _, player_name = splatan.build_initial_settlement_and_road(player_name, '13.14.17', Settlements.TOWN, '9.13.14')
+    _, player_name = splatan.build_initial_settlement_and_road(player_name, '11.15.16', Settlements.TOWN, '11.12.16')
+    return player_name
 
 
 def host_settings_and_enroll():
@@ -133,14 +137,14 @@ def host_settings_and_enroll():
 def host_settings_enroll_and_start_game():
     splatan, players = host_settings_and_enroll()
     host = players.get_current_player()
-    starting_player = splatan.start_game(host)
-    return splatan, players, starting_player
+    starting_player_name = splatan.start_game(host.name)
+    return splatan, players, starting_player_name
 
 
 def host_settings_enroll_start_game_setup():
-    splatan, players, starting_player = host_settings_enroll_and_start_game()
+    splatan, players, starting_player_name = host_settings_enroll_and_start_game()
 
-    player = build_initial_settlements(splatan, starting_player)
+    player_name = build_initial_settlements(splatan, starting_player_name)
     splatan.check_initial_setup_complete()
 
-    return splatan, players, player
+    return splatan, players, player_name

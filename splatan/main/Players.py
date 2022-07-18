@@ -1,9 +1,9 @@
-import splatan.main.Player as Player
+from splatan.main.Player import Player
 import splatan.main.Tile as Tile
 import splatan.main.Board as Board
-from splatan.main.errors import PlayerExistsError
+from splatan.main.errors import PlayerExistsError, PlayerDoesNotExistError
 
-from typing import List
+from typing import List, Dict
 from random import randint
 
 
@@ -12,14 +12,24 @@ class Players:
         self.current_player_index = 0
         self.num_players: int = 0
         self.players: List[Player] = []
+        self.name_to_player: Dict[str, Player] = {}
+
         self.board = board
 
-    def add_player(self, player: Player) -> None:
+    def add_player(self, player_name: str) -> None:
+        player = Player(player_name)
+
         if player in self.players:
             raise PlayerExistsError(f"{player.name} is already a player")
 
         self.players.append(player)
+        self.name_to_player[player_name] = player
         self.num_players += 1
+
+    def get_player_by_name(self, name: str) -> Player:
+        if name not in self.name_to_player:
+            raise PlayerDoesNotExistError(f"Player {name} doesn't exist")
+        return self.name_to_player[name]
 
     def get_current_player(self) -> Player:
         return self.players[self.current_player_index]
