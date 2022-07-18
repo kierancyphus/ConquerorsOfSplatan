@@ -39,18 +39,33 @@ def test_create_multiple_games():
     assert mock_game_manager.number_of_active_games() > 1
 
 
-# def test_enroll_player():
-#     create_game_response = create_game()
-#     game_id = create_game_response.json()["game_id"]
-#     print(f"create game response: {create_game_response.json()}")
-#     print(mock_game_manager.game_id_to_game)
-#     request = EnrollPlayerRequest(name="Joe")
-#     response = client.post(f"/game/{game_id}/enroll_player", json=dict(request))
-#     print(response.json())
-#     assert True
-    # assert game_manager_provider.number_of_active_games() == 0
+def test_enroll_player_fails_with_same_name():
+    game_id = create_game().json()["game_id"]
+
+    request = EnrollPlayerRequest(name="Jim")
+    response = post_to_game(game_id, "enroll_player", request)
+
+    assert response.status_code == 400
+
+
+def test_enroll_player():
+    create_game_response = create_game()
+    game_id = create_game_response.json()["game_id"]
+
+    request = EnrollPlayerRequest(name="Joe")
+    response = post_to_game(game_id, "enroll_player", request)
+
+    assert response.status_code == 200
 
 
 def create_game():
     create_game_request = CreateGameRequest(host_name="Jim")
     return client.post("/create-game", json=dict(create_game_request))
+
+
+def post_to_game(game_id: str, endpoint: str, request):
+    path = f"/game/{game_id}/{endpoint}"
+    response = client.post(path, json=dict(request))
+    return response
+
+

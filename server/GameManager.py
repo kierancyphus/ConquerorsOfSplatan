@@ -14,6 +14,10 @@ class GameManager:
 
         new_game = Splatan(host_name)
         self.game_id_to_game[game_id] = new_game
+
+        # TODO: for now there are no settings, so just skip them
+        new_game.settings()
+
         return game_id
 
     def get_game(self, game_id: str) -> Splatan:

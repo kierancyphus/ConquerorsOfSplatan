@@ -1,6 +1,7 @@
 import splatan.main.Player as Player
 import splatan.main.Tile as Tile
 import splatan.main.Board as Board
+from splatan.main.errors import PlayerExistsError
 
 from typing import List
 from random import randint
@@ -15,7 +16,7 @@ class Players:
 
     def add_player(self, player: Player) -> None:
         if player in self.players:
-            raise ValueError(f"Error: player: {player.name} is already a player")
+            raise PlayerExistsError(f"{player.name} is already a player")
 
         self.players.append(player)
         self.num_players += 1

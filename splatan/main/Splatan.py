@@ -4,6 +4,7 @@ import splatan.main.Player as Player
 from splatan.main.enums.GameState import GameState
 from splatan.main.Dice import Dice
 from splatan.main.enums.Settlements import Settlements
+from splatan.main.errors import EnrollmentNotOpenError
 
 from typing import Tuple
 
@@ -24,7 +25,7 @@ class Splatan:
     def settings(self) -> None:
         # doesn't do anything for now, but will eventually let you choose how many pieces you want and stuff
         self.state = GameState.PLAYER_ENROLLMENT
-        pass
+        print("Changing the game state to enrollment")
 
     def enroll_player(self, name: str) -> Players:
         """
@@ -35,8 +36,9 @@ class Splatan:
         :param name: name of the player trying to enroll
         :return:
         """
+        print(self.state)
         if self.state != GameState.PLAYER_ENROLLMENT:
-            raise ValueError('Error: Enrollment is not currently open.')
+            raise EnrollmentNotOpenError('Error: Enrollment is not currently open.')
 
         new_player = Player.Player(name)
         self.players.add_player(new_player)
