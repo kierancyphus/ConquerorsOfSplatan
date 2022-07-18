@@ -60,6 +60,9 @@ class Players:
                 if player.is_on_tile(tile):
                     player.receives_card(tile.terrain)
 
+    def get_all_players_names(self) -> List[str]:
+        return [player.name for player in self.players]
+
     def __str__(self) -> str:
         return f"<Players: {[str(p) for p in self.players]}>"
 
